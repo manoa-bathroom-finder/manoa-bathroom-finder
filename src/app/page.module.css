@@ -28,6 +28,26 @@
   font-size: clamp(2.5rem, 6vw, 4.5rem);
 }
 
+.signIn {
+  display: inline-block;
+  margin-top: 1.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  background: #fff;
+  color: #174b3a;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.signIn:hover {
+  background: #dce9df;
+}
+
+.signIn:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 4px;
+}
+
 .content p {
   max-width: 38rem;
   font-size: 1.125rem;

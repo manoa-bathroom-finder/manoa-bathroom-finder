@@ -1,5 +1,6 @@
 import styles from './page.module.css';
 import Image from 'next/image';
+import Link from 'next/link';
 import { GeoAlt, Star, Heart } from 'react-bootstrap-icons';
 
 const Home = () => (
@@ -8,6 +9,7 @@ const Home = () => (
       <div className={styles.content}>
         <h1>Manoa Rest Stop</h1>
         <p>Find a bathroom on campus with confidence.</p>
+        <Link className={styles.signIn} href="/auth/signin">Sign in</Link>
       </div>
     </section>
 
