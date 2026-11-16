@@ -34,6 +34,66 @@
   margin-bottom: 0;
 }
 
+.introduction {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 3rem;
+}
+
+.photo {
+  margin: 0;
+}
+
+.photo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+}
+
+.photo figcaption {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+}
+
+.photo a {
+  color: inherit;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.card {
+  padding: 1.5rem;
+  background: #fff;
+  border-radius: 0.5rem;
+}
+
+.card h3 {
+  margin: 1rem 0 0.5rem;
+  font-size: 1.25rem;
+}
+
+.card p {
+  font-size: 1rem;
+}
+
+@media (max-width: 700px) {
+  .introduction,
+  .cards {
+    grid-template-columns: 1fr;
+  }
+
+  .introduction {
+    gap: 2rem;
+  }
+}
+
 @media (max-width: 600px) {
   .hero,
   .overview,
