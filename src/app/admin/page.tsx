@@ -1,67 +1,20 @@
-import { Col, Container, Row, Table } from 'react-bootstrap';
-import StuffItemAdmin from '@/components/StuffItemAdmin';
-import { prisma } from '@/lib/prisma';
-import { adminProtectedPage } from '@/lib/page-protection';
+import { redirect } from 'next/navigation';
 import { auth } from '@/lib/auth';
+import AdminDashboardClient from '@/components/admin/AdminDashboardClient';
+import { getAdminDashboardData } from '@/lib/adminData';
 
-const AdminPage = async () => {
+export const dynamic = 'force-dynamic';
+
+export default async function AdminPage() {
   const session = await auth();
-  adminProtectedPage(
-    session as {
-      user: { email: string; id: string; name: string };
-    } | null,
-  );
-  const stuff = await prisma.stuff.findMany({});
-  const users = await prisma.user.findMany({});
+  const userWithRole = session?.user as { email?: string; randomKey?: string; role?: string } | undefined;
+  const role = userWithRole?.randomKey ?? userWithRole?.role;
 
-  return (
-    <main>
-      <Container id="list" fluid className="py-3">
-        <Row>
-          <Col>
-            <h1>List Stuff Admin</h1>
-            <Table striped bordered hover>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Quantity</th>
-                  <th>Condition</th>
-                  <th>Owner</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {stuff.map((item) => (
-                  <StuffItemAdmin key={item.id} {...item} />
-                ))}
-              </tbody>
-            </Table>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <h1>List Users Admin</h1>
-            <Table striped bordered hover>
-              <thead>
-                <tr>
-                  <th>Email</th>
-                  <th>Role</th>
-                </tr>
-              </thead>
-              <tbody>
-                {users.map((user) => (
-                  <tr key={user.id}>
-                    <td>{user.email}</td>
-                    <td>{user.role}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
-          </Col>
-        </Row>
-      </Container>
-    </main>
-  );
-};
+  if (!session || role !== 'ADMIN') {
+    redirect('/auth/signin');
+  }
 
-export default AdminPage;
+  const { restrooms, reviews } = await getAdminDashboardData();
+
+  return <AdminDashboardClient initialRestrooms={restrooms} initialReviews={reviews} />;
+}
