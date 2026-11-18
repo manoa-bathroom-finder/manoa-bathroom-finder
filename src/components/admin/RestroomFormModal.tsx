@@ -1,9 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Button, Col, Form, Modal, Row } from 'react-bootstrap';
-import { UH_MANOA_BUILDINGS } from '@/types/admin';
-import { AdminRestroom, RestroomFormValues } from '@/types/admin';
+import { AdminRestroom, RestroomFormValues, UH_MANOA_BUILDINGS } from '@/types/admin';
 
 interface RestroomFormModalProps {
   show: boolean;
@@ -26,39 +25,21 @@ export default function RestroomFormModal({
   onHide,
   onSave,
 }: RestroomFormModalProps) {
-  const [building, setBuilding] = useState('');
-  const [floor, setFloor] = useState('1');
-  const [roomNumber, setRoomNumber] = useState('');
-  const [type, setType] = useState<AdminRestroom['type']>('Multi-Stall (Men & Women)');
-  const [stallCount, setStallCount] = useState(4);
-  const [lastRenovated, setLastRenovated] = useState('');
-  const [isAccessible, setIsAccessible] = useState(true);
-  const [amenities, setAmenities] = useState<string[]>(['ADA Accessible']);
-  const [notes, setNotes] = useState('');
-
-  useEffect(() => {
-    if (editingRestroom) {
-      setBuilding(editingRestroom.building);
-      setFloor(editingRestroom.floor);
-      setRoomNumber(editingRestroom.roomNumber);
-      setType(editingRestroom.type);
-      setStallCount(editingRestroom.stallCount);
-      setLastRenovated(editingRestroom.lastRenovated ? String(editingRestroom.lastRenovated) : '');
-      setIsAccessible(editingRestroom.isAccessible);
-      setAmenities(editingRestroom.amenities);
-      setNotes(editingRestroom.notes);
-    } else {
-      setBuilding('');
-      setFloor('1');
-      setRoomNumber('');
-      setType('Multi-Stall (Men & Women)');
-      setStallCount(4);
-      setLastRenovated('');
-      setIsAccessible(true);
-      setAmenities(['ADA Accessible']);
-      setNotes('');
-    }
-  }, [editingRestroom, show]);
+  const [building, setBuilding] = useState(editingRestroom?.building ?? '');
+  const [floor, setFloor] = useState(editingRestroom?.floor ?? '1');
+  const [roomNumber, setRoomNumber] = useState(editingRestroom?.roomNumber ?? '');
+  const [type, setType] = useState<AdminRestroom['type']>(
+    editingRestroom?.type ?? 'Multi-Stall (Men & Women)',
+  );
+  const [stallCount, setStallCount] = useState(editingRestroom?.stallCount ?? 4);
+  const [lastRenovated, setLastRenovated] = useState(
+    editingRestroom?.lastRenovated ? String(editingRestroom.lastRenovated) : '',
+  );
+  const [isAccessible, setIsAccessible] = useState(editingRestroom?.isAccessible ?? true);
+  const [amenities, setAmenities] = useState<string[]>(
+    editingRestroom?.amenities ?? ['ADA Accessible'],
+  );
+  const [notes, setNotes] = useState(editingRestroom?.notes ?? '');
 
   const toggleAmenity = (item: string) => {
     setAmenities((prev) => {
@@ -95,7 +76,9 @@ export default function RestroomFormModal({
         <Modal.Header closeButton className="bg-dark text-white">
           <Modal.Title className="fs-5 fw-bold">
             <i className="fa-solid fa-restroom me-2 text-info" />
-            {editingRestroom ? `Edit Restroom: ${editingRestroom.building}` : 'Register New Campus Restroom'}
+            {editingRestroom
+              ? `Edit Restroom: ${editingRestroom.building}`
+              : 'Register New Campus Restroom'}
           </Modal.Title>
         </Modal.Header>
 
@@ -149,7 +132,7 @@ export default function RestroomFormModal({
                 value={type}
                 onChange={(e) => setType(e.target.value as AdminRestroom['type'])}
               >
-                <option value="Multi-Stall (Men & Women)">Multi-Stall (Men &amp; Women)</option>
+                <option value="Multi-Stall (Men & Women)">Multi-Stall (Men & Women)</option>
                 <option value="All-Gender / Single-Stall">All-Gender / Single-Stall</option>
                 <option value="Men">Men&apos;s Only</option>
                 <option value="Women">Women&apos;s Only</option>
@@ -180,7 +163,9 @@ export default function RestroomFormModal({
             </Col>
 
             <Col xs={12}>
-              <Form.Label className="fw-semibold small d-block">Accessibility &amp; Amenities</Form.Label>
+              <Form.Label className="fw-semibold small d-block">
+                Accessibility & Amenities
+              </Form.Label>
               <div className="d-flex flex-wrap gap-3 bg-light p-3 rounded border">
                 {AMENITY_OPTIONS.map((item) => (
                   <Form.Check
