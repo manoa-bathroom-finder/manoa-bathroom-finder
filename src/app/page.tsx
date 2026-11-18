@@ -7,7 +7,7 @@ const Home = () => (
   <main id="landing-page">
     <section className={styles.hero}>
       <div className={styles.content}>
-        <h1>Manoa Rest Stop</h1>
+        <h1>Manoa Bathroom Finder</h1>
         <p>Find a bathroom on campus with confidence.</p>
         <Link className={styles.signIn} href="/auth/signin">Sign in</Link>
       </div>
@@ -17,7 +17,7 @@ const Home = () => (
       <div className={`${styles.content} ${styles.introduction}`}>
         <div>
           <h2>Know before you go</h2>
-          <p>Manoa Rest Stop is a planned campus bathroom finder for the UH Mānoa community. It brings restroom locations and community insights together to help you find a stop that fits your needs.</p>
+          <p>Manoa Bathroom Finder is a planned campus bathroom finder for the UH Mānoa community. It brings restroom locations and community insights together to help you find a stop that fits your needs.</p>
         </div>
         <figure className={styles.photo}>
           <Image src="/manoa-campus.jpg" alt="View of the UH Mānoa campus from Round Top Drive" width={3264} height={2448} sizes="(max-width: 700px) 100vw, 45vw" />
