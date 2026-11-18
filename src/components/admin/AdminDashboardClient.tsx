@@ -505,9 +505,10 @@ export default function AdminDashboardClient({
           </tbody>
         </Table>
       </Card>
-
+    
       {/* ADD / EDIT RESTROOM MODAL */}
       <RestroomFormModal
+        key={showModal ? `restroom-${editingRestroom?.id ?? 'new'}` : 'restroom-closed'}
         show={showModal}
         editingRestroom={editingRestroom}
         onHide={() => setShowModal(false)}
