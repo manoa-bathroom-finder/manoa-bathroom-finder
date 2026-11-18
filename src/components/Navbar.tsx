@@ -17,24 +17,26 @@ const NavBar: React.FC = () => {
   return (
     <Navbar bg="light" expand="lg">
       <Container>
-        <Navbar.Brand href="/">Next.js Application Template</Navbar.Brand>
+        {/* Changed the template name to the project name. */}
+        <Navbar.Brand href="/">Manoa Bathroom Finder</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto justify-content-start">
+
+            {/* Added a link to the landing page. */}
+            <Nav.Link id="home-nav" href="/" active={pathName === '/'}>
+              Home
+            </Nav.Link>
 
             <Nav.Link id="map-nav" href="/map" active={pathName === '/map'}>
               Map
             </Nav.Link>
 
+            {/* Replaced Add Stuff and List Stuff with Dashboard for signed-in users. */}
             {currentUser && (
-              <>
-                <Nav.Link id="add-stuff-nav" href="/add" active={pathName === '/add'}>
-                  Add Stuff
-                </Nav.Link>
-                <Nav.Link id="list-stuff-nav" href="/list" active={pathName === '/list'}>
-                  List Stuff
-                </Nav.Link>
-              </>
+              <Nav.Link id="dashboard-nav" href="/dashboard" active={pathName === '/dashboard'}>
+                Dashboard
+              </Nav.Link>
             )}
 
             {currentUser && role === 'ADMIN' && (
