@@ -1,3 +1,13 @@
+:root {
+  --color-brand-50: #f0fdfa;
+  --color-brand-100: #ccfbf1;
+  --color-brand-500: #14b8a6;
+  --color-brand-600: #0d9488;
+  --color-brand-700: #0f766e;
+  --color-brand-800: #115e59;
+  --color-brand-900: #134e4a;
+}
+
 html,
 body {
   --bs-light-rgb: 236, 236, 236;
@@ -6,6 +16,7 @@ body {
   padding: 0;
   margin: 0;
 }
+
 .wrapper {
   box-sizing: border-box;
   min-height: 100%;
@@ -46,3 +57,45 @@ body {
 .admin-kpi-card:hover {
   transform: translateY(-2px);
 }
+
+/* Admin Console Brand & Status Helpers */
+.btn-brand-teal {
+  background-color: #0d9488 !important;
+  border-color: #0d9488 !important;
+}
+
+.btn-brand-teal:hover {
+  background-color: #0f766e !important;
+  border-color: #0f766e !important;
+}
+
+.badge-soft-teal {
+  background-color: #ccfbf1 !important;
+  color: #115e59 !important;
+}
+
+.badge-soft-amber {
+  background-color: #fef3c7 !important;
+  color: #92400e !important;
+}
+
+.badge-soft-rose {
+  background-color: #ffe4e6 !important;
+  color: #9f1239 !important;
+}
+
+.admin-kpi-card {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.admin-kpi-card:hover {
+  transform: translateY(-2px);
+}
+
+/* Custom Brand Teal Utilities for Bootstrap */
+.bg-brand-600 { background-color: var(--color-brand-600) !important; }
+.bg-brand-700 { background-color: var(--color-brand-700) !important; }
+.bg-brand-100 { background-color: var(--color-brand-100) !important; }
+.text-brand-600 { color: var(--color-brand-600) !important; }
+.text-brand-700 { color: var(--color-brand-700) !important; }
+.text-brand-800 { color: var(--color-brand-800) !important; }
