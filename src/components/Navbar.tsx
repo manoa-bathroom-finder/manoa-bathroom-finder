@@ -1,6 +1,6 @@
 'use client';
 
-import { useSession } from 'next-auth/react'; // v5 compatible
+import { useSession } from 'next-auth/react';
 import { usePathname } from 'next/navigation';
 import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import { BoxArrowRight, Lock, PersonFill, PersonPlusFill } from 'react-bootstrap-icons';
@@ -8,9 +8,12 @@ import { BoxArrowRight, Lock, PersonFill, PersonPlusFill } from 'react-bootstrap
 const NavBar: React.FC = () => {
   const { data: session, status } = useSession();
   const pathName = usePathname();
+
   if (status === 'loading') return null;
+
   const currentUser = session?.user?.email;
   const role = session?.user?.role;
+
   return (
     <Navbar bg="light" expand="lg">
       <Container>
@@ -18,6 +21,11 @@ const NavBar: React.FC = () => {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto justify-content-start">
+
+            <Nav.Link id="map-nav" href="/map" active={pathName === '/map'}>
+              Map
+            </Nav.Link>
+
             {currentUser && (
               <>
                 <Nav.Link id="add-stuff-nav" href="/add" active={pathName === '/add'}>
@@ -28,12 +36,14 @@ const NavBar: React.FC = () => {
                 </Nav.Link>
               </>
             )}
+
             {currentUser && role === 'ADMIN' && (
               <Nav.Link id="admin-stuff-nav" href="/admin" active={pathName === '/admin'}>
                 Admin
               </Nav.Link>
             )}
           </Nav>
+
           <Nav>
             {session ? (
               <NavDropdown id="login-dropdown" title={currentUser}>
