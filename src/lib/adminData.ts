@@ -1,20 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import { AdminRestroom, AdminReview, ReviewStatus } from '@/types/admin';
 
-export const UH_MANOA_BUILDINGS = [
-  'Hamilton Library',
-  'Sinclair Library',
-  'Campus Center',
-  'Paradise Palms Cafe',
-  'POST Building',
-  'Keller Hall',
-  'Bilger Hall',
-  'Holmes Hall',
-  'Sakamaki Hall',
-  'Queen Liliʻuokalani Center (QLCSS)',
-  'Shidler College of Business',
-  'Art Building',
-];
 
 export async function getAdminDashboardData(): Promise<{
   restrooms: AdminRestroom[];
