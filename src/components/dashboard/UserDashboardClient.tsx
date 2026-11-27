@@ -60,7 +60,9 @@ export default function UserDashboardClient({ data }: Props) {
   );
 
   // Modal visibility states
-  const [showReportModal, setShowReportModal] = useState(false);
+  const [showReportModal, setShowReportModal] = useState(
+    () => searchParams.get('report') === 'true' && data.bathrooms.length > 0,
+  );
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [showRequestModal, setShowRequestModal] = useState(false);
 
@@ -90,14 +92,12 @@ export default function UserDashboardClient({ data }: Props) {
   const [reqAmenities, setReqAmenities] = useState<string[]>([]);
   const [reqNotes, setReqNotes] = useState<string>('');
 
-  // Auto-open Quick Condition Report modal if Navbar "Live Report" (/dashboard?report=true) is clicked
+  // Clean ?report=true from the URL after opening the modal
   useEffect(() => {
-    if (searchParams.get('report') === 'true' && data.bathrooms.length > 0) {
-      setReportBathroomId((prev) => prev || data.bathrooms[0].id);
-      setShowReportModal(true);
+    if (searchParams.get('report') === 'true') {
       router.replace('/dashboard');
     }
-  }, [searchParams, data.bathrooms, router]);
+  }, [searchParams, router]);
 
   const openReportForBathroom = (bathroomId?: number) => {
     if (bathroomId) setReportBathroomId(bathroomId);
@@ -193,7 +193,7 @@ export default function UserDashboardClient({ data }: Props) {
     });
   };
 
-const handleReviewSubmit = (e: React.FormEvent) => {
+  const handleReviewSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!reviewBathroomId) return;
     startTransition(async () => {
@@ -1019,8 +1019,8 @@ const handleReviewSubmit = (e: React.FormEvent) => {
                     >
                       <option value="Multi-Stall (Men & Women)">Multi-Stall (Men & Women)</option>
                       <option value="Single-Occupancy All-Gender">Single-Occupancy All-Gender</option>
-                      <option value="Men's Multi-Stall">Men's Multi-Stall</option>
-                      <option value="Women's Multi-Stall">Women's Multi-Stall</option>
+                      <option value="Men's Multi-Stall">Men&apos;s Multi-Stall</option>
+                      <option value="Women's Multi-Stall">Women&apos;s Multi-Stall</option>
                     </select>
                   </div>
                   <div className="col-md-3">
