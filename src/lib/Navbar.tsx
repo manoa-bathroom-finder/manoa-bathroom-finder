@@ -18,8 +18,8 @@ interface NavBarProps {
 const NavBar = ({ favoriteCount = 2, pendingCount = 2 }: NavBarProps) => {
   const { data: session } = useSession();
   const currentUser = session?.user?.email;
-  const userWithRole = session?.user as { email: string; randomKey: string };
-  const role = userWithRole?.randomKey;
+  // const userWithRole = session?.user as { email: string; randomKey: string };
+  const role = session?.user?.role;
   const pathName = usePathname();
 
   return (
