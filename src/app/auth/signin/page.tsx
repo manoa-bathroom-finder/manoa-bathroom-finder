@@ -14,6 +14,7 @@ function SignInForm() {
 
   const urlError = searchParams.get('error');
   const urlCode = searchParams.get('code');
+  const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
 
   const initialBanner: AuthBannerType =
     urlCode === 'suspended'
@@ -49,7 +50,7 @@ function SignInForm() {
       return;
     }
 
-    router.push('/dashboard');
+    router.push(callbackUrl);
     router.refresh();
   };
 
@@ -81,6 +82,7 @@ function SignInForm() {
                 <Form.Group className="mb-3" controlId="signin-email">
                   <Form.Label>Email</Form.Label>
                   <Form.Control
+                    name="email"
                     type="email"
                     placeholder="john@foo.com"
                     value={email}
@@ -92,6 +94,7 @@ function SignInForm() {
                 <Form.Group className="mb-4" controlId="signin-password">
                   <Form.Label>Password</Form.Label>
                   <Form.Control
+                    name="password"
                     type="password"
                     placeholder="Enter password"
                     value={password}
