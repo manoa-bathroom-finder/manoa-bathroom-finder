@@ -2,43 +2,33 @@ import { test, expect } from './auth-utils';
 
 test.slow();
 test('test access to admin page', async ({ getUserPage }) => {
-  // Call the getUserPage fixture with admin signin info to get authenticated session for admin
   const adminPage = await getUserPage('admin@foo.com', 'changeme');
 
-  // Navigate to the home page and wait for post-login indicator
+  // Navigate to the home page and verify signed-in state
   await adminPage.goto('http://localhost:3000/');
   await expect(
     adminPage.getByRole('button', { name: 'admin@foo.com' })
   ).toBeVisible({ timeout: 10000 });
 
-  // Check for navigation elements
+  // Verify updated Navbar links
   await expect(
-    adminPage.getByRole('link', { name: 'Manoa Bathroom Finder' })
+    adminPage.getByRole('link', { name: /manoa-bathroom-finder/i })
   ).toBeVisible({ timeout: 5000 });
   await expect(
-    adminPage.getByRole('link', { name: 'Add Stuff' })
+    adminPage.getByRole('link', { name: 'Restroom Directory' })
   ).toBeVisible({ timeout: 5000 });
   await expect(
-    adminPage.getByRole('link', { name: 'List Stuff' })
+    adminPage.getByRole('link', { name: 'Interactive Map' })
   ).toBeVisible({ timeout: 5000 });
   await expect(
-    adminPage.getByRole('link', { name: 'Admin' })
+    adminPage.getByRole('link', { name: 'My Dashboard' })
   ).toBeVisible({ timeout: 5000 });
-
-  // Test Add Stuff adminPage
-  await adminPage.getByRole('link', { name: 'Add Stuff' }).click();
   await expect(
-    adminPage.getByRole('heading', { name: 'Add Stuff' })
+    adminPage.getByRole('link', { name: /Admin Queue/i })
   ).toBeVisible({ timeout: 5000 });
 
-  // Test List Stuff adminPage
-  await adminPage.getByRole('link', { name: 'List Stuff' }).click();
-  await expect(
-    adminPage.getByRole('heading', { name: 'Stuff' })
-  ).toBeVisible({ timeout: 5000 });
-
-  // Test Admin adminPage
-  await adminPage.getByRole('link', { name: 'Admin' }).click();
+  // Navigate to Admin Queue and verify Admin Console renders
+  await adminPage.getByRole('link', { name: /Admin Queue/i }).click();
   await expect(
     adminPage.getByRole('heading', { name: 'Site Administration Console' })
   ).toBeVisible({ timeout: 5000 });
