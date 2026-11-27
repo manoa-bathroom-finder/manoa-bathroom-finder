@@ -18,11 +18,14 @@ enum Role {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  email    String @unique
-  password String
-  role     Role   @default(USER)
-  reviews Review[]
+  id               Int               @id @default(autoincrement())
+  email            String            @unique
+  password         String
+  role             Role              @default(USER)
+  reviews          Review[]
+  conditionReports ConditionReport[]
+  bathroomRequests BathroomRequest[]
+  favorites        Favorite[]
 }
 
 enum Condition {
@@ -47,18 +50,26 @@ enum ApprovalStatus {
   REJECTED
 }
 
+enum RequestType {
+  NEW_BATHROOM
+  CORRECTION
+}
+
 model Bathroom {
-  id            Int      @id @default(autoincrement())
-  building      String
-  floor         String
-  roomNumber    String?
-  type          String   @default("Multi-Stall (Men & Women)")
-  stallCount    Int      @default(1)
-  lastRenovated Int?
-  isAccessible  Boolean  @default(false)
-  amenities     String[]
-  notes         String?
-  reviews       Review[]
+  id               Int               @id @default(autoincrement())
+  building         String
+  floor            String
+  roomNumber       String?
+  type             String            @default("Multi-Stall (Men & Women)")
+  stallCount       Int               @default(1)
+  lastRenovated    Int?
+  isAccessible     Boolean           @default(false)
+  amenities        String[]
+  notes            String?
+  reviews          Review[]
+  favorites        Favorite[]
+  conditionReports ConditionReport[]
+  requests         BathroomRequest[]
 }
 
 model Review {
@@ -68,10 +79,52 @@ model Review {
   odor          Int
   conditionTags String[]
   comment       String?
-  status        ApprovalStatus @default(PENDING)
+  status        ApprovalStatus @default(APPROVED)
   createdAt     DateTime       @default(now())
   userId        Int
   bathroomId    Int
   user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   bathroom      Bathroom       @relation(fields: [bathroomId], references: [id], onDelete: Cascade)
+}
+
+model Favorite {
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now())
+  userId     Int
+  bathroomId Int
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bathroom   Bathroom @relation(fields: [bathroomId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, bathroomId])
+}
+
+model ConditionReport {
+  id         Int      @id @default(autoincrement())
+  condition  String
+  note       String?
+  createdAt  DateTime @default(now())
+  userId     Int
+  bathroomId Int
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bathroom   Bathroom @relation(fields: [bathroomId], references: [id], onDelete: Cascade)
+}
+
+model BathroomRequest {
+  id            Int            @id @default(autoincrement())
+  requestType   RequestType    @default(NEW_BATHROOM)
+  building      String
+  floor         String
+  roomNumber    String?
+  type          String         @default("Multi-Stall (Men & Women)")
+  stallCount    Int            @default(1)
+  lastRenovated Int?
+  isAccessible  Boolean        @default(false)
+  amenities     String[]
+  notes         String?
+  status        ApprovalStatus @default(PENDING)
+  createdAt     DateTime       @default(now())
+  userId        Int
+  bathroomId    Int?
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bathroom      Bathroom?      @relation(fields: [bathroomId], references: [id], onDelete: SetNull)
 }
