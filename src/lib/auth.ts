@@ -1,8 +1,7 @@
-
-import NextAuth, { type DefaultSession } from 'next-auth';
+import NextAuth, { CredentialsSignin, type DefaultSession } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
-import { prisma } from './prisma';
 import bcrypt from 'bcrypt';
+import { prisma } from './prisma';
 
 declare module 'next-auth' {
   interface Session {
@@ -21,7 +20,6 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        // Type guard for credentials
         if (
           !credentials ||
           typeof credentials.email !== 'string' ||
@@ -29,11 +27,19 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
         ) {
           return null;
         }
+
         const user = await prisma.user.findUnique({ where: { email: credentials.email } });
         if (!user || typeof user.password !== 'string') return null;
+
+        if (user.isSuspended) {
+          const suspendedError = new CredentialsSignin();
+          suspendedError.code = 'suspended';
+          throw suspendedError;
+        }
+
         const isValid = await bcrypt.compare(credentials.password, user.password);
         if (!isValid) return null;
-        // Return user object for session
+
         return {
           id: user.id.toString(),
           email: user.email,
@@ -58,7 +64,6 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
       };
     },
     jwt({ token, user }) {
-      // user is type: { id?: string; email?: string; name?: string; role?: string }
       if (user && typeof (user as { role?: string }).role === 'string') {
         token.role = (user as { role?: string }).role;
       }

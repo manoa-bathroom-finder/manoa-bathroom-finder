@@ -1,57 +1,130 @@
 'use client';
 
-import { signIn } from 'next-auth/react'; // v5 compatible
-import { Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
+import { Suspense, useState } from 'react';
+import { signIn } from 'next-auth/react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import Link from 'next/link';
+import { Alert, Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
 
-/** The sign in page. */
-const SignIn = () => {
-  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
+type AuthBannerType = 'suspended' | 'invalid' | null;
+
+function SignInForm() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const urlError = searchParams.get('error');
+  const urlCode = searchParams.get('code');
+  const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
+
+  const initialBanner: AuthBannerType =
+    urlCode === 'suspended'
+      ? 'suspended'
+      : urlError
+        ? 'invalid'
+        : null;
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [banner, setBanner] = useState<AuthBannerType>(initialBanner);
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const target = e.target as typeof e.target & {
-      email: { value: string };
-      password: { value: string };
-    };
-    const email = target.email.value;
-    const password = target.password.value;
-    await signIn('credentials', {
-      callbackUrl: '/list',
+    setSubmitting(true);
+    setBanner(null);
+
+    const res = await signIn('credentials', {
+      redirect: false,
       email,
       password,
     });
+
+    setSubmitting(false);
+
+    if (res?.error) {
+      if (res.code === 'suspended') {
+        setBanner('suspended');
+      } else {
+        setBanner('invalid');
+      }
+      return;
+    }
+
+    router.push(callbackUrl);
+    router.refresh();
   };
 
   return (
-    <main>
-      <Container className="py-5">
-        <Row className="justify-content-center">
-          <Col xs={12} sm={9} md={7} lg={5}>
-            <h1 className="text-center">Sign In</h1>
-            <Card>
-              <Card.Body>
-                <Form method="post" onSubmit={handleSubmit}>
-                  <Form.Group controlId="formBasicEmail">
-                    <Form.Label>Email</Form.Label>
-                    <input name="email" type="email" autoComplete="email" required className="form-control" />
-                  </Form.Group>
-                  <Form.Group>
-                    <Form.Label>Password</Form.Label>
-                    <input name="password" type="password" autoComplete="current-password" required className="form-control" />
-                  </Form.Group>
-                  <Button type="submit" variant="success" className="mt-3">
-                    Sign in
-                  </Button>
-                </Form>
-              </Card.Body>
-              <Card.Footer>
-                Don&apos;t have an account?{' '}
-                <a href="/auth/signup">Sign up</a>
-              </Card.Footer>
-            </Card>
-          </Col>
-        </Row>
-      </Container>
-    </main>
-  );
-};
+    <Container className="py-5">
+      <Row className="justify-content-center">
+        <Col md={6} lg={5}>
+          <Card className="shadow-sm border-0">
+            <Card.Body className="p-4">
+              <h1 className="h4 fw-bold text-center mb-4">Sign In</h1>
 
-export default SignIn;
+              {banner === 'suspended' && (
+                <Alert variant="warning" dismissible onClose={() => setBanner(null)}>
+                  <i className="fa-solid fa-triangle-exclamation me-2" />
+                  <strong>Account Suspended:</strong> Your account has been suspended. Please
+                  email <a href="mailto:admin@foo.com" className="alert-link">admin@foo.com</a> for
+                  assistance.
+                </Alert>
+              )}
+
+              {banner === 'invalid' && (
+                <Alert variant="danger" dismissible onClose={() => setBanner(null)}>
+                  <i className="fa-solid fa-circle-exclamation me-2" />
+                  <strong>Sign-In Failed:</strong> Incorrect email or password. Please try again.
+                </Alert>
+              )}
+
+              <Form onSubmit={handleSubmit}>
+                <Form.Group className="mb-3" controlId="signin-email">
+                  <Form.Label>Email</Form.Label>
+                  <Form.Control
+                    name="email"
+                    type="email"
+                    placeholder="john@foo.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </Form.Group>
+
+                <Form.Group className="mb-4" controlId="signin-password">
+                  <Form.Label>Password</Form.Label>
+                  <Form.Control
+                    name="password"
+                    type="password"
+                    placeholder="Enter password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                </Form.Group>
+
+                <div className="d-grid">
+                  <Button type="submit" variant="primary" disabled={submitting}>
+                    {submitting ? 'Signing in...' : 'Sign In'}
+                  </Button>
+                </div>
+              </Form>
+            </Card.Body>
+
+            <Card.Footer className="bg-light text-center py-3">
+              Don&apos;t have an account? <Link href="/auth/signup">Sign up</Link>
+            </Card.Footer>
+          </Card>
+        </Col>
+      </Row>
+    </Container>
+  );
+}
+
+export default function SignInPage() {
+  return (
+    <Suspense fallback={<Container className="py-5 text-center text-muted">Loading...</Container>}>
+      <SignInForm />
+    </Suspense>
+  );
+}
